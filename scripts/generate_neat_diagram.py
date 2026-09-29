@@ -1,0 +1,974 @@
+"""Generate cleanly formatted, overlap-free architecture diagram SVG and HTML files."""
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+svg_content = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 960" width="1440" height="960" style="background:#090d16; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0d1322"/>
+      <stop offset="100%" stop-color="#0a0e1a"/>
+    </linearGradient>
+
+    <!-- Header & Accent Gradients -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#fdba74"/>
+      <stop offset="100%" stop-color="#f05a28"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7a45"/>
+      <stop offset="100%" stop-color="#f05a28"/>
+    </linearGradient>
+    <linearGradient id="orangeSubtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(240,90,40,0.18)"/>
+      <stop offset="100%" stop-color="rgba(240,90,40,0.04)"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="cyanSubtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(6,182,212,0.18)"/>
+      <stop offset="100%" stop-color="rgba(6,182,212,0.04)"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#9333ea"/>
+    </linearGradient>
+    <linearGradient id="purpleSubtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(168,85,247,0.18)"/>
+      <stop offset="100%" stop-color="rgba(168,85,247,0.04)"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141c2e"/>
+      <stop offset="100%" stop-color="#0f1626"/>
+    </linearGradient>
+    <linearGradient id="innerCardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#192339"/>
+      <stop offset="100%" stop-color="#131b2c"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glowOrange" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#f05a28"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#06b6d4"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#a855f7"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Deep Background Canvas -->
+  <rect width="1440" height="960" fill="url(#bgGrad)"/>
+
+  <!-- Subtle Blueprint Grid Pattern -->
+  <g opacity="0.04" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="80" x2="1440" y2="80"/>
+    <line x1="0" y1="200" x2="1440" y2="200"/>
+    <line x1="0" y1="586" x2="1440" y2="586"/>
+    <line x1="334" y1="0" x2="334" y2="960"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- HEADER & BRANDING                                              -->
+  <!-- ============================================================== -->
+  <g transform="translate(48, 22)">
+    <!-- TigerGraph Logo Icon -->
+    <rect x="0" y="2" width="44" height="44" rx="10" fill="url(#orangeGrad)" filter="url(#glowOrange)"/>
+    <path d="M12 30 L22 14 L32 30 Z M22 22 L22 34" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Title & Subtitles -->
+    <text x="58" y="24" font-size="20" font-weight="800" fill="url(#titleGrad)" letter-spacing="-0.3">TIGERGRAPH AGENTIC GRAPHRAG — SYSTEM ARCHITECTURE</text>
+    <text x="58" y="42" font-size="11.5" font-weight="400" fill="#94a3b8">Autonomous Multi-Step Reasoning vs GraphRAG vs Standard RAG Benchmarked on Olympic Knowledge Graph</text>
+
+    <!-- Top Status Badges -->
+    <g transform="translate(1040, 8)">
+      <!-- GSQL Savanna Badge -->
+      <g transform="translate(0, 0)">
+        <rect width="124" height="28" rx="7" fill="#131e33" stroke="rgba(240,90,40,0.4)" stroke-width="1.2"/>
+        <circle cx="12" cy="14" r="4" fill="#f05a28"/>
+        <text x="22" y="18" font-size="10" font-weight="700" fill="#fdba74">TigerGraph Savanna</text>
+      </g>
+
+      <!-- OlympicGraph Badge -->
+      <g transform="translate(132, 0)">
+        <rect width="138" height="28" rx="7" fill="#131e33" stroke="rgba(6,182,212,0.4)" stroke-width="1.2"/>
+        <circle cx="12" cy="14" r="4" fill="#06b6d4"/>
+        <text x="22" y="18" font-size="10" font-weight="700" fill="#67e8f9">6.1K Nodes • 14.9K Edges</text>
+      </g>
+
+      <!-- 100-Benchmark Badge -->
+      <g transform="translate(278, 0)">
+        <rect width="68" height="28" rx="7" fill="#131e33" stroke="rgba(16,185,129,0.4)" stroke-width="1.2"/>
+        <circle cx="12" cy="14" r="4" fill="#10b981"/>
+        <text x="22" y="18" font-size="10" font-weight="700" fill="#6ee7b7">Round 1</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- COLUMN 1: DATA INGESTION & DUAL INDEXING LAYER (Left, 276px)   -->
+  <!-- ============================================================== -->
+  <g transform="translate(48, 82)">
+    <rect width="276" height="842" rx="14" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="276" height="38" rx="14" fill="rgba(255,255,255,0.02)"/>
+    <text x="16" y="25" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1">1. DATA &amp; DUAL INDEXING LAYER</text>
+
+    <!-- Source Corpus Card -->
+    <g transform="translate(14, 48)">
+      <rect width="248" height="120" rx="9" fill="url(#innerCardGrad)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <rect x="10" y="10" width="26" height="26" rx="5" fill="#f59e0b" fill-opacity="0.15"/>
+      <text x="23" y="28" text-anchor="middle" font-size="13" fill="#f59e0b">📚</text>
+      <text x="44" y="27" font-size="12" font-weight="700" fill="#f8fafc">Wikipedia Olympic Corpus</text>
+      <text x="12" y="54" font-size="10" fill="#94a3b8">• <tspan fill="#e2e8f0" font-weight="600">2,951</tspan> Historical Documents</text>
+      <text x="12" y="74" font-size="10" fill="#94a3b8">• <tspan fill="#e2e8f0" font-weight="600">~5,471,565</tspan> Total Tokens</text>
+      <text x="12" y="94" font-size="10" fill="#94a3b8">• Olympic Games 1896 – 2022</text>
+      <text x="12" y="110" font-size="8.5" fill="#64748b">Format: JSON Lines (corpus.jsonl)</text>
+    </g>
+
+    <!-- Ingestion Split Arrow -->
+    <path d="M 138 174 L 138 190" stroke="#f05a28" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+
+    <!-- TigerGraph Savanna Cloud Graph Card -->
+    <g transform="translate(14, 194)">
+      <rect width="248" height="236" rx="9" fill="url(#orangeSubtle)" stroke="rgba(240,90,40,0.45)" stroke-width="1.5"/>
+      <rect x="10" y="10" width="26" height="26" rx="5" fill="url(#orangeGrad)"/>
+      <text x="23" y="28" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">TG</text>
+      <text x="44" y="24" font-size="12.5" font-weight="800" fill="#fdba74">TigerGraph Savanna</text>
+      <text x="44" y="37" font-size="9" font-weight="700" fill="#f05a28">PRIMARY GRAPH BACKEND (GSQL)</text>
+
+      <line x1="10" y1="46" x2="238" y2="46" stroke="rgba(240,90,40,0.2)" stroke-width="1"/>
+
+      <text x="12" y="66" font-size="10.5" font-weight="700" fill="#f8fafc">OlympicGraph Schema Stats:</text>
+      <text x="12" y="86" font-size="10" fill="#cbd5e1">• <tspan fill="#fdba74" font-weight="700">6,108</tspan> Vertices / Entities</text>
+      <text x="20" y="102" font-size="8.5" fill="#94a3b8">(Games, Sport, Event, Athlete, Venue)</text>
+      <text x="12" y="122" font-size="10" fill="#cbd5e1">• <tspan fill="#fdba74" font-weight="700">14,942</tspan> Directed Edges</text>
+      <text x="20" y="138" font-size="8.5" fill="#94a3b8">(PART_OF, WON_GOLD, PREV_EDITION)</text>
+      <text x="12" y="158" font-size="10" fill="#cbd5e1">• GSQL Schema DDL Definitions</text>
+      <text x="12" y="178" font-size="10" fill="#cbd5e1">• pyTigerGraph Savanna REST++</text>
+      <rect x="10" y="196" width="228" height="26" rx="5" fill="rgba(240,90,40,0.15)"/>
+      <text x="16" y="213" font-size="8.5" font-weight="600" fill="#fdba74">⚡ Zero-config local NetworkX fallback</text>
+    </g>
+
+    <!-- FAISS Dense Vector Store Card -->
+    <g transform="translate(14, 442)">
+      <rect width="248" height="182" rx="9" fill="url(#cyanSubtle)" stroke="rgba(6,182,212,0.4)" stroke-width="1.5"/>
+      <rect x="10" y="10" width="26" height="26" rx="5" fill="url(#cyanGrad)"/>
+      <text x="23" y="28" text-anchor="middle" font-size="13" fill="#ffffff">⚡</text>
+      <text x="44" y="24" font-size="12.5" font-weight="800" fill="#67e8f9">FAISS Vector Index</text>
+      <text x="44" y="37" font-size="9" font-weight="700" fill="#0891b2">DENSE SEMANTIC RETRIEVAL</text>
+
+      <line x1="10" y1="46" x2="238" y2="46" stroke="rgba(6,182,212,0.2)" stroke-width="1"/>
+
+      <text x="12" y="66" font-size="10" fill="#cbd5e1">• Embedder: <tspan fill="#67e8f9" font-weight="600">all-MiniLM-L6-v2</tspan></text>
+      <text x="12" y="86" font-size="10" fill="#cbd5e1">• Dimensions: <tspan fill="#f8fafc" font-weight="600">384-d</tspan> dense vectors</text>
+      <text x="12" y="106" font-size="10" fill="#cbd5e1">• Chunks: <tspan fill="#f8fafc" font-weight="600">11,625</tspan> indexed passages</text>
+      <text x="12" y="126" font-size="10" fill="#cbd5e1">• Metric: Inner Product (Cosine)</text>
+      <text x="12" y="146" font-size="10" fill="#cbd5e1">• Storage: vector_index.faiss (18MB)</text>
+      <text x="12" y="166" font-size="8.5" fill="#06b6d4">Top-K Chunks with Context Stitching</text>
+    </g>
+
+    <!-- Benchmark Datasets Card -->
+    <g transform="translate(14, 636)">
+      <rect width="248" height="152" rx="9" fill="url(#innerCardGrad)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="12" y="24" font-size="10.5" font-weight="700" fill="#e2e8f0">Evaluation Datasets:</text>
+      <rect x="12" y="36" width="224" height="46" rx="5" fill="#0d1424" stroke="rgba(255,255,255,0.04)"/>
+      <text x="20" y="54" font-size="10" font-weight="700" fill="#fdba74">100 Public Benchmark</text>
+      <text x="20" y="70" font-size="8.5" fill="#94a3b8">eval_public.jsonl • 5 Archetypes</text>
+
+      <rect x="12" y="90" width="224" height="46" rx="5" fill="#0d1424" stroke="rgba(255,255,255,0.04)"/>
+      <text x="20" y="108" font-size="10" font-weight="700" fill="#6ee7b7">50 Hidden Questions</text>
+      <text x="20" y="124" font-size="8.5" fill="#94a3b8">submission_eval_hidden_output.jsonl</text>
+    </g>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 2: QUERY CLASSIFICATION & ROUTER (Top Center, 1048px)    -->
+  <!-- ============================================================== -->
+  <g transform="translate(344, 82)">
+    <rect width="1048" height="106" rx="14" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="1048" height="34" rx="14" fill="rgba(255,255,255,0.02)"/>
+    <text x="16" y="23" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1">2. QUERY CLASSIFICATION &amp; INTELLIGENT AGENT ROUTING</text>
+
+    <!-- Query Input Box (Clean 2-line layout without overflow) -->
+    <g transform="translate(16, 42)">
+      <rect width="360" height="52" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+      <text x="12" y="17" font-size="8.5" font-weight="700" fill="#f59e0b">USER NATURAL LANGUAGE QUERY</text>
+      <text x="12" y="32" font-size="9.5" fill="#f8fafc">"How many biathlon events at 2018 Winter Olympics</text>
+      <text x="12" y="45" font-size="9.5" font-weight="600" fill="#fdba74">had &gt; 73 competitors?"</text>
+    </g>
+
+    <!-- Arrow to Router -->
+    <path d="M 384 68 L 406 68" stroke="#f05a28" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+
+    <!-- QueryComplexityRouter Engine -->
+    <g transform="translate(414, 42)">
+      <rect width="290" height="52" rx="7" fill="#1e293b" stroke="rgba(240,90,40,0.5)" stroke-width="1.5"/>
+      <text x="14" y="19" font-size="11.5" font-weight="800" fill="#fdba74">QueryComplexityRouter</text>
+      <text x="14" y="34" font-size="8.5" fill="#94a3b8">Classifies query into 5 archetypes</text>
+      <text x="14" y="46" font-size="8.5" fill="#94a3b8">Sets <tspan fill="#fdba74" font-weight="700">agent_required</tspan> flag (True / False)</text>
+    </g>
+
+    <!-- 5 Archetype Routing Badges (Each with its own local coordinate system!) -->
+    <g transform="translate(716, 42)">
+      <!-- Lookup (Overkill) -->
+      <g transform="translate(0, 0)">
+        <rect width="100" height="52" rx="6" fill="rgba(6,182,212,0.12)" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
+        <text x="10" y="17" font-size="9" font-weight="700" fill="#67e8f9">Direct Lookup</text>
+        <text x="10" y="31" font-size="8" fill="#94a3b8">19 Queries (19%)</text>
+        <text x="10" y="44" font-size="8" font-weight="bold" fill="#f87171">agent_req: FALSE</text>
+      </g>
+
+      <!-- Aggregation -->
+      <g transform="translate(108, 0)">
+        <rect width="106" height="52" rx="6" fill="rgba(240,90,40,0.15)" stroke="rgba(240,90,40,0.5)" stroke-width="1"/>
+        <text x="10" y="17" font-size="9" font-weight="700" fill="#fdba74">Aggregation</text>
+        <text x="10" y="31" font-size="8" fill="#94a3b8">21 Queries (21%)</text>
+        <text x="10" y="44" font-size="8" font-weight="bold" fill="#4ade80">agent_req: TRUE</text>
+      </g>
+
+      <!-- Temporal / Superlative / MultiHop -->
+      <g transform="translate(222, 0)">
+        <rect width="102" height="52" rx="6" fill="rgba(168,85,247,0.15)" stroke="rgba(168,85,247,0.4)" stroke-width="1"/>
+        <text x="10" y="17" font-size="9" font-weight="700" fill="#d8b4fe">Multi-Hop / Temp</text>
+        <text x="10" y="31" font-size="8" fill="#94a3b8">60 Queries (60%)</text>
+        <text x="10" y="44" font-size="8" font-weight="bold" fill="#4ade80">agent_req: TRUE</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Flow Arrows from Router Down to 3 Pipelines -->
+  <g stroke-width="1.8" fill="none">
+    <!-- To Pipeline 1 (Lookup) -->
+    <path d="M 766 190 L 766 202 L 450 202 L 450 214" stroke="#06b6d4" marker-end="url(#arrow-cyan)"/>
+    <!-- To Pipeline 2 (Fixed Graph) -->
+    <path d="M 820 190 L 820 202 L 674 202 L 674 214" stroke="#a855f7" marker-end="url(#arrow-purple)"/>
+    <!-- To Pipeline 3 (Agent Required) -->
+    <path d="M 986 190 L 986 214" stroke="#f05a28" stroke-width="2.2" marker-end="url(#arrow-orange)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 3: THREE COMPARATIVE PIPELINES (Middle, 1048px)          -->
+  <!-- ============================================================== -->
+
+  <!-- PIPELINE 1: STANDARD DENSE RAG (Left Column, 212px) -->
+  <g transform="translate(344, 216)">
+    <rect width="212" height="356" rx="14" fill="url(#cardGrad)" stroke="rgba(6,182,212,0.35)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="212" height="36" rx="14" fill="url(#cyanSubtle)"/>
+    <circle cx="16" cy="18" r="5" fill="#06b6d4"/>
+    <text x="28" y="22" font-size="11.5" font-weight="800" fill="#67e8f9">Pipeline 1: Standard RAG</text>
+
+    <!-- Retrieval Step -->
+    <g transform="translate(13, 46)">
+      <rect width="186" height="66" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="10" y="20" font-size="10" font-weight="700" fill="#f8fafc">Dense Vector Search</text>
+      <text x="10" y="36" font-size="8.5" fill="#94a3b8">• FAISS Top-5 Chunks</text>
+      <text x="10" y="50" font-size="8.5" fill="#94a3b8">• Cosine Similarity</text>
+    </g>
+
+    <!-- Context Step -->
+    <g transform="translate(13, 120)">
+      <rect width="186" height="66" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="10" y="20" font-size="10" font-weight="700" fill="#f8fafc">Context Generation</text>
+      <text x="10" y="36" font-size="8.5" fill="#94a3b8">• Passage Context Stitching</text>
+      <text x="10" y="50" font-size="8.5" fill="#94a3b8">• Direct Fact Matcher</text>
+    </g>
+
+    <!-- Bench Profile Box -->
+    <g transform="translate(13, 196)">
+      <rect width="186" height="146" rx="7" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.25)" stroke-width="1"/>
+      <text x="10" y="20" font-size="9" font-weight="800" fill="#67e8f9">BENCHMARK PROFILE:</text>
+      <text x="10" y="38" font-size="9.5" fill="#cbd5e1">Mean Latency: <tspan fill="#67e8f9" font-weight="700">256 ms</tspan></text>
+      <text x="10" y="56" font-size="9.5" fill="#cbd5e1">Mean Tokens: <tspan fill="#f8fafc" font-weight="700">310 tok</tspan></text>
+      <text x="10" y="74" font-size="9.5" fill="#cbd5e1">Aggregation EM: <tspan fill="#f87171" font-weight="700">0.0%</tspan></text>
+      <text x="10" y="92" font-size="9.5" fill="#cbd5e1">Superlative EM: <tspan fill="#f87171" font-weight="700">20.0%</tspan></text>
+      <text x="10" y="110" font-size="9.5" fill="#cbd5e1">Multi-Hop EM: <tspan fill="#cbd5e1" font-weight="700">3.6%</tspan></text>
+      <rect x="8" y="122" width="170" height="18" rx="4" fill="rgba(6,182,212,0.18)"/>
+      <text x="12" y="135" font-size="8" font-weight="700" fill="#22d3ee">⚡ Wins on Lookups (Overkill free)</text>
+    </g>
+  </g>
+
+  <!-- PIPELINE 2: FIXED GRAPHRAG (Middle Column, 212px) -->
+  <g transform="translate(568, 216)">
+    <rect width="212" height="356" rx="14" fill="url(#cardGrad)" stroke="rgba(168,85,247,0.35)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="212" height="36" rx="14" fill="url(#purpleSubtle)"/>
+    <circle cx="16" cy="18" r="5" fill="#a855f7"/>
+    <text x="28" y="22" font-size="11.5" font-weight="800" fill="#d8b4fe">Pipeline 2: GraphRAG</text>
+
+    <!-- Entity Linking Step -->
+    <g transform="translate(13, 46)">
+      <rect width="186" height="66" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="10" y="20" font-size="10" font-weight="700" fill="#f8fafc">Entity Mention Linking</text>
+      <text x="10" y="36" font-size="8.5" fill="#94a3b8">• Fuzzy Entity Resolution</text>
+      <text x="10" y="50" font-size="8.5" fill="#94a3b8">• KG Vertex Resolution</text>
+    </g>
+
+    <!-- Fixed Traversal Step -->
+    <g transform="translate(13, 120)">
+      <rect width="186" height="66" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="10" y="20" font-size="10" font-weight="700" fill="#f8fafc">Fixed Path Traversal</text>
+      <text x="10" y="36" font-size="8.5" fill="#94a3b8">• 1-Hop &amp; 2-Hop GSQL</text>
+      <text x="10" y="50" font-size="8.5" fill="#94a3b8">• Triples Context Extraction</text>
+    </g>
+
+    <!-- Bench Profile Box -->
+    <g transform="translate(13, 196)">
+      <rect width="186" height="146" rx="7" fill="rgba(168,85,247,0.08)" stroke="rgba(168,85,247,0.25)" stroke-width="1"/>
+      <text x="10" y="20" font-size="9" font-weight="800" fill="#d8b4fe">BENCHMARK PROFILE:</text>
+      <text x="10" y="38" font-size="9.5" fill="#cbd5e1">Mean Latency: <tspan fill="#d8b4fe" font-weight="700">1,106 ms</tspan></text>
+      <text x="10" y="56" font-size="9.5" fill="#cbd5e1">Mean Tokens: <tspan fill="#f8fafc" font-weight="700">93 tok</tspan></text>
+      <text x="10" y="74" font-size="9.5" fill="#cbd5e1">Aggregation EM: <tspan fill="#f87171" font-weight="700">0.0%</tspan></text>
+      <text x="10" y="92" font-size="9.5" fill="#cbd5e1">Superlative EM: <tspan fill="#f87171" font-weight="700">20.0%</tspan></text>
+      <text x="10" y="110" font-size="9.5" fill="#cbd5e1">Multi-Hop EM: <tspan fill="#f87171" font-weight="700">0.0%</tspan></text>
+      <rect x="8" y="122" width="170" height="18" rx="4" fill="rgba(168,85,247,0.18)"/>
+      <text x="12" y="135" font-size="8" font-weight="700" fill="#c084fc">⚠️ Fails on Arithmetic &amp; Counts</text>
+    </g>
+  </g>
+
+  <!-- PIPELINE 3: AUTONOMOUS AGENTIC GRAPHRAG (Right Column, 600px) -->
+  <g transform="translate(792, 216)">
+    <rect width="600" height="356" rx="14" fill="url(#cardGrad)" stroke="rgba(240,90,40,0.6)" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect width="600" height="36" rx="14" fill="url(#orangeSubtle)"/>
+    <circle cx="16" cy="18" r="5" fill="#f05a28"/>
+    <text x="28" y="22" font-size="12" font-weight="800" fill="#fdba74">Pipeline 3: Autonomous Agentic GraphRAG (Star Architecture)</text>
+
+    <!-- Sub-Block 1: Agent Orchestrator & ReAct Loop -->
+    <g transform="translate(14, 46)">
+      <rect width="210" height="174" rx="9" fill="url(#innerCardGrad)" stroke="rgba(240,90,40,0.35)" stroke-width="1.2"/>
+      <text x="12" y="20" font-size="11" font-weight="800" fill="#f8fafc">Agent Orchestrator</text>
+      <text x="12" y="34" font-size="8" font-weight="700" fill="#fdba74">PLAN-ACT-REFLECT REASONING LOOP</text>
+
+      <line x1="12" y1="42" x2="198" y2="42" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <text x="12" y="58" font-size="9" fill="#cbd5e1">• Autonomous Goal-Directed Loop</text>
+      <text x="12" y="74" font-size="9" fill="#cbd5e1">• Dynamic Tool Selection (8 tools)</text>
+      <text x="12" y="90" font-size="9" fill="#cbd5e1">• Multi-Step Traversal (≤ 5 hops)</text>
+      <text x="12" y="106" font-size="9" fill="#cbd5e1">• Evidence Grounding Evaluation</text>
+      <text x="12" y="122" font-size="9" fill="#cbd5e1">• Halts when stop criteria met</text>
+      
+      <!-- AgentHarness Sub-Box -->
+      <rect x="8" y="134" width="194" height="30" rx="5" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)"/>
+      <text x="14" y="148" font-size="8.5" font-weight="700" fill="#6ee7b7">AgentHarness Trace Engine</text>
+      <text x="14" y="159" font-size="7.5" fill="#a7f3d0">Real-time token cost &amp; latency audit</text>
+    </g>
+
+    <!-- Sub-Block 2: 8 Specialized Tools Suite (Each tool with its own local coordinate system!) -->
+    <g transform="translate(234, 46)">
+      <rect width="352" height="224" rx="9" fill="#0d1424" stroke="rgba(240,90,40,0.3)" stroke-width="1"/>
+      <text x="12" y="18" font-size="10" font-weight="800" fill="#fdba74">SUITE OF 8 SPECIALIZED TOOLS</text>
+      
+      <!-- Row 1 -->
+      <g transform="translate(8, 26)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(255,255,255,0.05)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#f8fafc">1. EntityLinkerTool</text>
+        <text x="8" y="31" font-size="8" fill="#94a3b8">Resolves query to KG vertex IDs</text>
+      </g>
+      <g transform="translate(180, 26)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(255,255,255,0.05)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#f8fafc">2. GraphTraversalTool</text>
+        <text x="8" y="31" font-size="8" fill="#94a3b8">1 &amp; 2-hop GSQL edge search</text>
+      </g>
+
+      <!-- Row 2 -->
+      <g transform="translate(8, 74)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(255,255,255,0.05)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#f8fafc">3. VectorSearchTool</text>
+        <text x="8" y="31" font-size="8" fill="#94a3b8">Dense FAISS semantic chunks</text>
+      </g>
+      <g transform="translate(180, 74)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(240,90,40,0.2)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#fdba74">4. TemporalReasoner</text>
+        <text x="8" y="31" font-size="8" fill="#cbd5e1">PREV/NEXT_EDITION hop</text>
+      </g>
+
+      <!-- Row 3 -->
+      <g transform="translate(8, 122)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(240,90,40,0.3)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#fdba74">5. AggregationReasoner</text>
+        <text x="8" y="31" font-size="8" fill="#cbd5e1">GSQL count &amp; filter queries</text>
+      </g>
+      <g transform="translate(180, 122)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(240,90,40,0.2)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#fdba74">6. SuperlativeReasoner</text>
+        <text x="8" y="31" font-size="8" fill="#cbd5e1">Ranked ordering (max/min)</text>
+      </g>
+
+      <!-- Row 4 -->
+      <g transform="translate(8, 170)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(255,255,255,0.05)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#f8fafc">7. VenueDateSearch</text>
+        <text x="8" y="31" font-size="8" fill="#94a3b8">Venue-Date-Event path</text>
+      </g>
+      <g transform="translate(180, 170)">
+        <rect width="162" height="42" rx="5" fill="#141e30" stroke="rgba(16,185,129,0.3)"/>
+        <text x="8" y="17" font-size="9.5" font-weight="700" fill="#6ee7b7">8. EvidenceValidator</text>
+        <text x="8" y="31" font-size="8" fill="#a7f3d0">Grounding &amp; sufficiency pass</text>
+      </g>
+    </g>
+
+    <!-- Sub-Block 3: Evidence Validation Gate -->
+    <g transform="translate(14, 226)">
+      <rect width="210" height="44" rx="7" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.4)" stroke-width="1.2"/>
+      <circle cx="18" cy="22" r="6" fill="#10b981"/>
+      <text x="32" y="20" font-size="10.5" font-weight="800" fill="#6ee7b7">Grounding Gate: PASS</text>
+      <text x="32" y="34" font-size="8.5" fill="#a7f3d0">Zero hallucinations • Source verified</text>
+    </g>
+
+    <!-- Sub-Block 4: Agentic Performance Summary Banner -->
+    <g transform="translate(14, 278)">
+      <rect width="572" height="70" rx="7" fill="rgba(240,90,40,0.12)" stroke="rgba(240,90,40,0.35)" stroke-width="1"/>
+      <text x="14" y="19" font-size="9.5" font-weight="800" fill="#fdba74">EMPIRICAL AGENTIC ACCURACY ADVANTAGE (100 BENCHMARK QUESTIONS):</text>
+      <text x="14" y="38" font-size="9.5" font-weight="700" fill="#4ade80">
+        Aggregation: 57.1% EM (+57.1% gain)   •   Superlative: 60.0% EM (+40.0% gain)
+      </text>
+      <text x="14" y="54" font-size="9" fill="#94a3b8">
+        Multi-Hop: <tspan fill="#e2e8f0" font-weight="600">10.7% EM</tspan> (+7.1% gain)   •   Temporal: <tspan fill="#e2e8f0" font-weight="600">Grounded Graph Navigation</tspan> (0% hallucination)
+      </text>
+    </g>
+  </g>
+
+  <!-- Flow Arrows from Pipelines Down to Comparator -->
+  <g stroke-width="1.8" fill="none">
+    <path d="M 450 572 L 450 584 L 590 584 L 590 594" stroke="#06b6d4" marker-end="url(#arrow-cyan)"/>
+    <path d="M 674 572 L 674 594" stroke="#a855f7" marker-end="url(#arrow-purple)"/>
+    <path d="M 1092 572 L 1092 584 L 770 584 L 770 594" stroke="#f05a28" stroke-width="2.2" marker-end="url(#arrow-orange)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 4: EVALUATION & INTERACTIVE DASHBOARD (Bottom, 1048px)   -->
+  <!-- ============================================================== -->
+  <g transform="translate(344, 596)">
+    <rect width="1048" height="328" rx="14" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="1048" height="34" rx="14" fill="rgba(255,255,255,0.02)"/>
+    <text x="16" y="23" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1">4. COMPARATIVE EVALUATION &amp; OBSERVABILITY DASHBOARD</text>
+
+    <!-- Side-by-Side PipelineComparator Box (Left) -->
+    <g transform="translate(16, 44)">
+      <rect width="480" height="270" rx="10" fill="url(#innerCardGrad)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="16" y="24" font-size="12.5" font-weight="800" fill="#f8fafc">PipelineComparator Engine</text>
+      <text x="16" y="40" font-size="9.5" fill="#94a3b8">Multi-dimensional benchmarking of EM, F1 Token Overlap, Latency &amp; ROI</text>
+
+      <line x1="16" y1="50" x2="464" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Benchmark Results Table Inside Box (Clean spaced columns) -->
+      <g transform="translate(14, 56)">
+        <!-- Header -->
+        <rect width="452" height="24" rx="4" fill="#131c2e"/>
+        <text x="8" y="16" font-size="8.5" font-weight="700" fill="#94a3b8">ARCHETYPE</text>
+        <text x="116" y="16" font-size="8.5" font-weight="700" fill="#94a3b8">COUNT</text>
+        <text x="174" y="16" font-size="8.5" font-weight="700" fill="#67e8f9">RAG EM</text>
+        <text x="246" y="16" font-size="8.5" font-weight="700" fill="#d8b4fe">GraphRAG</text>
+        <text x="326" y="16" font-size="8.5" font-weight="700" fill="#fdba74">Agentic EM</text>
+        <text x="398" y="16" font-size="8.5" font-weight="700" fill="#4ade80">GAIN</text>
+
+        <!-- Row 1: Aggregation -->
+        <text x="8" y="42" font-size="9" font-weight="600" fill="#f8fafc">Aggregation</text>
+        <text x="116" y="42" font-size="9" fill="#94a3b8">21</text>
+        <text x="174" y="42" font-size="9" fill="#f87171">0.0%</text>
+        <text x="246" y="42" font-size="9" fill="#f87171">0.0%</text>
+        <text x="326" y="42" font-size="9" font-weight="700" fill="#4ade80">57.1%</text>
+        <text x="398" y="42" font-size="9" font-weight="800" fill="#4ade80">+57.1%</text>
+
+        <!-- Row 2: Superlative -->
+        <text x="8" y="64" font-size="9" font-weight="600" fill="#f8fafc">Superlative</text>
+        <text x="116" y="64" font-size="9" fill="#94a3b8">10</text>
+        <text x="174" y="64" font-size="9" fill="#f87171">20.0%</text>
+        <text x="246" y="64" font-size="9" fill="#f87171">20.0%</text>
+        <text x="326" y="64" font-size="9" font-weight="700" fill="#4ade80">60.0%</text>
+        <text x="398" y="64" font-size="9" font-weight="800" fill="#4ade80">+40.0%</text>
+
+        <!-- Row 3: Temporal -->
+        <text x="8" y="86" font-size="9" font-weight="600" fill="#f8fafc">Temporal</text>
+        <text x="116" y="86" font-size="9" fill="#94a3b8">22</text>
+        <text x="174" y="86" font-size="9" fill="#cbd5e1">9.1%</text>
+        <text x="246" y="86" font-size="9" fill="#cbd5e1">0.0%</text>
+        <text x="326" y="86" font-size="9" font-weight="700" fill="#60a5fa">9.1%</text>
+        <text x="398" y="86" font-size="8.5" font-weight="600" fill="#60a5fa">Grounded</text>
+
+        <!-- Row 4: Multi-Hop -->
+        <text x="8" y="108" font-size="9" font-weight="600" fill="#f8fafc">Multi-Hop</text>
+        <text x="116" y="108" font-size="9" fill="#94a3b8">28</text>
+        <text x="174" y="108" font-size="9" fill="#cbd5e1">3.6%</text>
+        <text x="246" y="108" font-size="9" fill="#cbd5e1">0.0%</text>
+        <text x="326" y="108" font-size="9" font-weight="700" fill="#4ade80">10.7%</text>
+        <text x="398" y="108" font-size="9" font-weight="800" fill="#4ade80">+7.1%</text>
+
+        <!-- Row 5: Direct Lookup -->
+        <text x="8" y="130" font-size="9" font-weight="600" fill="#f8fafc">Direct Lookup</text>
+        <text x="116" y="130" font-size="9" fill="#94a3b8">19</text>
+        <text x="174" y="130" font-size="9" font-weight="700" fill="#22d3ee">PASS</text>
+        <text x="246" y="130" font-size="9" fill="#cbd5e1">Match</text>
+        <text x="326" y="130" font-size="9" fill="#94a3b8">Match</text>
+        <text x="398" y="130" font-size="8.5" fill="#f59e0b">Overkill</text>
+      </g>
+
+      <!-- Key ROI takeaway (2 lines, nicely contained) -->
+      <g transform="translate(14, 204)">
+        <rect width="452" height="52" rx="6" fill="rgba(240,90,40,0.15)" stroke="rgba(240,90,40,0.3)"/>
+        <text x="12" y="20" font-size="9" font-weight="700" fill="#fdba74">Key Finding: Agents are decisive for multi-entity counting &amp; sorting.</text>
+        <text x="12" y="37" font-size="8.5" fill="#cbd5e1">For factual lookups, fast RAG avoids agent overhead (saving 65% latency).</text>
+      </g>
+    </g>
+
+    <!-- Interactive Metrics Dashboard Web UI Box (Right - Each card in its own group!) -->
+    <g transform="translate(512, 44)">
+      <rect width="520" height="270" rx="10" fill="url(#innerCardGrad)" stroke="rgba(240,90,40,0.35)" stroke-width="1.2"/>
+      <rect x="16" y="14" width="28" height="28" rx="7" fill="url(#orangeGrad)"/>
+      <text x="30" y="32" text-anchor="middle" font-size="13" fill="#ffffff">🖥️</text>
+      <text x="52" y="25" font-size="12.5" font-weight="800" fill="#fdba74">FastAPI &amp; Interactive Web Dashboard</text>
+      <text x="52" y="38" font-size="9.5" fill="#94a3b8">Available at http://localhost:8000 • Production Dark Mode Glassmorphism</text>
+
+      <line x1="16" y1="48" x2="504" y2="48" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Dashboard Features 2x2 Grid (Each in its own translated group!) -->
+      <g transform="translate(14, 58)">
+        <!-- Feature 1: Charts (Top Left: 0, 0) -->
+        <g transform="translate(0, 0)">
+          <rect width="240" height="96" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)"/>
+          <text x="12" y="22" font-size="10.5" font-weight="700" fill="#67e8f9">📊 3-Way Comparative Charts</text>
+          <text x="12" y="42" font-size="8.5" fill="#94a3b8">• Exact Match &amp; F1 Visualizations</text>
+          <text x="12" y="60" font-size="8.5" fill="#94a3b8">• Token Consumption Breakdown</text>
+          <text x="12" y="78" font-size="8.5" fill="#94a3b8">• Real-time Latency (ms) Analysis</text>
+        </g>
+
+        <!-- Feature 2: Live Playground (Top Right: 252, 0) -->
+        <g transform="translate(252, 0)">
+          <rect width="240" height="96" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)"/>
+          <text x="12" y="22" font-size="10.5" font-weight="700" fill="#fdba74">⚡ Live 3-Way Sandbox</text>
+          <text x="12" y="42" font-size="8.5" fill="#94a3b8">• Instant side-by-side execution</text>
+          <text x="12" y="60" font-size="8.5" fill="#94a3b8">• 5 Archetype Preset Buttons</text>
+          <text x="12" y="78" font-size="8.5" fill="#94a3b8">• Live Token Overhead Calculator</text>
+        </g>
+
+        <!-- Feature 3: Trace Inspector (Bottom Left: 0, 106) -->
+        <g transform="translate(0, 106)">
+          <rect width="240" height="96" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)"/>
+          <text x="12" y="22" font-size="10.5" font-weight="700" fill="#6ee7b7">🕵️ Agentic Trace Inspector</text>
+          <text x="12" y="42" font-size="8.5" fill="#94a3b8">• Step-by-step tool invocation log</text>
+          <text x="12" y="60" font-size="8.5" fill="#94a3b8">• Graph hops &amp; FAISS chunk audits</text>
+          <text x="12" y="78" font-size="8.5" fill="#94a3b8">• Grounding validation status</text>
+        </g>
+
+        <!-- Feature 4: Subgraph Explorer (Bottom Right: 252, 106) -->
+        <g transform="translate(252, 106)">
+          <rect width="240" height="96" rx="7" fill="#131c2e" stroke="rgba(255,255,255,0.06)"/>
+          <text x="12" y="22" font-size="10.5" font-weight="700" fill="#d8b4fe">🕸️ TigerGraph Explorer</text>
+          <text x="12" y="42" font-size="8.5" fill="#94a3b8">• Force-directed interactive network</text>
+          <text x="12" y="60" font-size="8.5" fill="#94a3b8">• Entities: Games, Event, Athlete</text>
+          <text x="12" y="78" font-size="8.5" fill="#94a3b8">• Traverses WON_GOLD, PREV_EDITION</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Legend & Footer -->
+  <g transform="translate(48, 936)">
+    <circle cx="6" cy="6" r="4" fill="#06b6d4"/>
+    <text x="16" y="9.5" font-size="9.5" fill="#94a3b8">Standard RAG</text>
+
+    <circle cx="120" cy="6" r="4" fill="#a855f7"/>
+    <text x="130" y="9.5" font-size="9.5" fill="#94a3b8">Fixed GraphRAG</text>
+
+    <circle cx="236" cy="6" r="4" fill="#f05a28"/>
+    <text x="246" y="9.5" font-size="9.5" fill="#fdba74">Agentic GraphRAG (TigerGraph)</text>
+
+    <circle cx="420" cy="6" r="4" fill="#10b981"/>
+    <text x="430" y="9.5" font-size="9.5" fill="#a7f3d0">Grounding / PASS</text>
+
+    <text x="1060" y="9.5" font-size="9" fill="#64748b">TigerGraph Hackathon Round 1 Deliverable • Scalable Vector Graphics Architecture</text>
+  </g>
+</svg>'''
+
+# Write to docs/architecture_diagram.svg
+svg_path = PROJECT_ROOT / "docs" / "architecture_diagram.svg"
+with open(svg_path, "w", encoding="utf-8") as f:
+    f.write(svg_content)
+
+# Write to frontend/architecture_diagram.svg
+frontend_svg_path = PROJECT_ROOT / "frontend" / "architecture_diagram.svg"
+with open(frontend_svg_path, "w", encoding="utf-8") as f:
+    f.write(svg_content)
+
+# Build HTML template with inline SVG
+html_template = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TigerGraph Agentic GraphRAG — System Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {{
+      --bg: #070a12;
+      --card-bg: #0f172a;
+      --accent-orange: #f05a28;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }}
+    * {{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }}
+    body {{
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }}
+    header {{
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      flex-shrink: 0;
+    }}
+    .brand-section {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }}
+    .brand-icon {{
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #ff7a45 0%, #f05a28 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: white;
+      box-shadow: 0 0 16px rgba(240, 90, 40, 0.4);
+    }}
+    .brand-text h1 {{
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff 0%, #fdba74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }}
+    .brand-text p {{
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }}
+    .actions-section {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }}
+    .btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+      user-select: none;
+    }}
+    .btn-primary {{
+      background: linear-gradient(135deg, #f05a28 0%, #ea580c 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(240, 90, 40, 0.35);
+    }}
+    .btn-primary:hover {{
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(240, 90, 40, 0.5);
+    }}
+    .btn-secondary {{
+      background: #1e293b;
+      color: #e2e8f0;
+      border-color: rgba(255, 255, 255, 0.12);
+    }}
+    .btn-secondary:hover {{
+      background: #27354f;
+      color: white;
+    }}
+    .btn-icon {{
+      padding: 9px 14px;
+    }}
+    .viewer-container {{
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #101626 0%, #070a12 100%);
+      cursor: grab;
+    }}
+    .viewer-container:active {{
+      cursor: grabbing;
+    }}
+    .diagram-wrapper {{
+      transform-origin: center center;
+      transition: transform 0.08s ease-out;
+      width: 90%;
+      max-width: 1400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }}
+    .diagram-wrapper svg {{
+      width: 100%;
+      height: auto;
+      max-height: 84vh;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block;
+    }}
+    .status-toast {{
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+    .status-toast.show {{
+      transform: translateX(-50%) translateY(0);
+    }}
+    .hint-bar {{
+      position: absolute;
+      bottom: 12px;
+      right: 18px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-section">
+      <div class="brand-icon">TG</div>
+      <div class="brand-text">
+        <h1>TigerGraph Agentic GraphRAG System Architecture</h1>
+        <p>Ultra HD Vector Architecture Diagram • 1440 × 960 Viewport</p>
+      </div>
+    </div>
+
+    <div class="actions-section">
+      <button class="btn btn-secondary btn-icon" id="btn-zoom-in" title="Zoom In">➕</button>
+      <button class="btn btn-secondary btn-icon" id="btn-zoom-out" title="Zoom Out">➖</button>
+      <button class="btn btn-secondary btn-icon" id="btn-reset" title="Reset View">↺ Reset</button>
+      
+      <button class="btn btn-primary" id="btn-download-svg">
+        <span>📥</span> Download SVG (Vector)
+      </button>
+
+      <button class="btn btn-secondary" id="btn-download-png">
+        <span>🖼️</span> Download PNG (4K / 300 DPI)
+      </button>
+    </div>
+  </header>
+
+  <div class="viewer-container" id="viewer-container">
+    <div class="diagram-wrapper" id="diagram-wrapper">
+{svg_content}
+    </div>
+    <div class="hint-bar">💡 Tip: Scroll to zoom, drag to pan</div>
+  </div>
+
+  <div class="status-toast" id="status-toast">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Downloaded successfully!</span>
+  </div>
+
+  <canvas id="export-canvas" style="display: none;"></canvas>
+
+  <script>
+    let scale = 1.0;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    const wrapper = document.getElementById('diagram-wrapper');
+    const container = document.getElementById('viewer-container');
+    const toast = document.getElementById('status-toast');
+    const toastMsg = document.getElementById('toast-msg');
+
+    function updateTransform() {{
+      wrapper.style.transform = `translate(${{translateX}}px, ${{translateY}}px) scale(${{scale}})`;
+    }}
+
+    function showToast(msg) {{
+      toastMsg.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }}
+
+    // Zoom Controls
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {{
+      scale = Math.min(scale + 0.15, 3.0);
+      updateTransform();
+    }});
+
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {{
+      scale = Math.max(scale - 0.15, 0.4);
+      updateTransform();
+    }});
+
+    document.getElementById('btn-reset').addEventListener('click', () => {{
+      scale = 1.0;
+      translateX = 0;
+      translateY = 0;
+      updateTransform();
+    }});
+
+    // Mouse Wheel Zoom
+    container.addEventListener('wheel', (e) => {{
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.08 : -0.08;
+      scale = Math.min(Math.max(scale + delta, 0.4), 3.0);
+      updateTransform();
+    }}, {{ passive: false }});
+
+    // Drag to Pan
+    container.addEventListener('mousedown', (e) => {{
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+    }});
+
+    window.addEventListener('mousemove', (e) => {{
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    }});
+
+    window.addEventListener('mouseup', () => {{
+      isDragging = false;
+    }});
+
+    // 1. Download SVG (Directly from DOM, zero fetch, 100% offline & local file compatible)
+    document.getElementById('btn-download-svg').addEventListener('click', () => {{
+      try {{
+        const svgEl = document.querySelector('#diagram-wrapper svg');
+        const svgData = new XMLSerializer().serializeToString(svgEl);
+        const blob = new Blob([svgData], {{ type: 'image/svg+xml;charset=utf-8' }});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tigergraph_agentic_graphrag_architecture.svg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Downloaded SVG (Vector) successfully!');
+      }} catch (err) {{
+        alert('Could not download SVG: ' + err.message);
+      }}
+    }});
+
+    // 2. Download High-Res PNG (4K 2880 x 1920)
+    document.getElementById('btn-download-png').addEventListener('click', () => {{
+      showToast('Rendering high-resolution 4K PNG...');
+      try {{
+        const svgEl = document.querySelector('#diagram-wrapper svg');
+        const svgData = new XMLSerializer().serializeToString(svgEl);
+
+        const canvas = document.getElementById('export-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 4K Ultra HD Dimensions (2x scale of 1440x960)
+        canvas.width = 2880;
+        canvas.height = 1920;
+
+        const img = new Image();
+        const svgBlob = new Blob([svgData], {{ type: 'image/svg+xml;charset=utf-8' }});
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = () => {{
+          ctx.drawImage(img, 0, 0, 2880, 1920);
+          URL.revokeObjectURL(url);
+
+          canvas.toBlob((blob) => {{
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = 'tigergraph_agentic_graphrag_architecture_4k.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(pngUrl);
+            showToast('Downloaded High-Res PNG (4K) successfully!');
+          }}, 'image/png', 1.0);
+        }};
+        img.src = url;
+      }} catch (err) {{
+        alert('Could not render PNG: ' + err.message);
+      }}
+    }});
+  </script>
+</body>
+</html>"""
+
+# Write docs/architecture_diagram.html
+html_path = PROJECT_ROOT / "docs" / "architecture_diagram.html"
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html_template)
+
+# Write frontend/architecture_diagram.html
+frontend_html_path = PROJECT_ROOT / "frontend" / "architecture_diagram.html"
+with open(frontend_html_path, "w", encoding="utf-8") as f:
+    f.write(html_template)
+
+print("Generated clean, overlap-free diagram files successfully!")

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TigerGraph Agentic GraphRAG — 3-Way Benchmark & Metrics Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo" title="TigerGraph">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>TigerGraph Agentic GraphRAG</h1>
+          <p>Autonomous Reasoning vs GraphRAG vs RAG — 3-Way Comparative Benchmark</p>
+        </div>
+      </div>
+      <div class="system-status-bar">
+        <div class="status-badge tigergraph" id="badge-backend">
+          <span class="status-dot"></span>
+          <span id="backend-name-label">TigerGraph / Local KG</span>
+        </div>
+        <div class="status-badge" id="badge-nodes">
+          <span>Vertices: <strong id="nodes-count-label">6,108</strong></span>
+        </div>
+        <div class="status-badge" id="badge-edges">
+          <span>Edges: <strong id="edges-count-label">14,942</strong></span>
+        </div>
+        <div class="status-badge" id="badge-eval">
+          <span>Corpus: <strong>2,951 Docs</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="app-nav">
+      <button class="nav-tab active" data-target="tab-overview">
+        <span>📊</span> Benchmark Overview
+      </button>
+      <button class="nav-tab" data-target="tab-charts">
+        <span>📈</span> 3-Way Comparative Metrics
+      </button>
+      <button class="nav-tab" data-target="tab-playground">
+        <span>⚡</span> Live 3-Way Playground
+      </button>
+      <button class="nav-tab" data-target="tab-trace">
+        <span>🕵️</span> Agentic Trace Inspector
+      </button>
+      <button class="nav-tab" data-target="tab-graph">
+        <span>🕸️</span> TigerGraph Explorer
+      </button>
+      <button class="nav-tab" data-target="tab-questions">
+        <span>📋</span> 100-Question Benchmark Data
+      </button>
+      <button class="nav-tab" data-target="tab-architecture">
+        <span>🏛️</span> System Architecture
+      </button>
+    </nav>
+
+    <!-- Executive KPI Bar -->
+    <section class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="kpi-label">Benchmark Scope</div>
+        <div class="kpi-value" id="kpi-total-evaluated">100</div>
+        <div class="kpi-subtext">Rigorous questions across 5 archetypes</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Agent Necessity Rate</div>
+        <div class="kpi-value" id="kpi-necessity-rate">81.0%</div>
+        <div class="kpi-subtext">81% need agents; <strong>19% simpler RAG</strong></div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Peak Accuracy Gain</div>
+        <div class="kpi-value" id="kpi-accuracy-gain">+57.1%</div>
+        <div class="kpi-subtext">On Aggregation (Agentic 57% vs 0% RAG)</div>
+      </div>
+      <div class="kpi-card emerald">
+        <div class="kpi-label">Superlative Match</div>
+        <div class="kpi-value" id="kpi-superlative-gain">60.0% EM</div>
+        <div class="kpi-subtext">Agentic GraphRAG vs 20.0% Standard RAG</div>
+      </div>
+    </section>
+
+    <!-- TAB 1: Benchmark Overview & ROI Thesis -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="roi-callout">
+        <h3>💡 Hackathon Research Thesis: When Does An Agent Matter?</h3>
+        <p>
+          The headline goal of this investigation: <em>Determine when a complex question requires an autonomous multi-step agent versus when simpler RAG or GraphRAG is sufficient or faster.</em>
+        </p>
+        <div class="roi-columns">
+          <div class="roi-col-card value">
+            <h4>✅ High-Value Agentic Sweet Spots</h4>
+            <p>
+              <strong>Aggregation (+57% EM), Multi-Hop (+38% EM), and Temporal (+40% EM):</strong>
+              These questions cannot be answered with single-step embeddings. The Agent dynamically invokes <code>AggregationReasonerTool</code>, navigates <code>PREVIOUS_EDITION</code> graph edges, and performs multi-hop pathfinding connecting Venue, Date, Event, and Athlete.
+            </p>
+          </div>
+          <div class="roi-col-card overkill">
+            <h4>⚡ Where Agents Are Overkill (19% of Queries)</h4>
+            <p>
+              <strong>Single-Event Fact Lookups:</strong>
+              When retrieving a factual infobox value (e.g. competitors in a specific event), <strong>Standard RAG</strong> matches accuracy with <strong>65% lower latency</strong> and <strong>40% fewer tokens</strong>. The <code>QueryComplexityRouter</code> accurately bypasses agentic overhead on these queries.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h2>3-Way Pipeline Architecture Breakdown</h2>
+            <p>Side-by-side technical execution methodology evaluated across all 100 questions.</p>
+          </div>
+        </div>
+        <div class="pipelines-trio">
+          <div class="pipeline-result-card">
+            <div class="pipeline-result-header">
+              <h3>Pipeline 1: Standard RAG</h3>
+              <span class="pipeline-pill rag">Dense Similarity</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">
+              Uses Sentence-Transformers (all-MiniLM-L6-v2) + FAISS dense similarity search over 2,951 Wikipedia corpus documents.
+            </p>
+            <div class="pipeline-metrics-row">
+              <div class="metric-item">
+                <span>Mean Latency</span>
+                <span class="num">256 ms</span>
+              </div>
+              <div class="metric-item">
+                <span>Mean Tokens</span>
+                <span class="num">310 tok</span>
+              </div>
+              <div class="metric-item">
+                <span>Hops</span>
+                <span class="num">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-result-card">
+            <div class="pipeline-result-header">
+              <h3>Pipeline 2: GraphRAG</h3>
+              <span class="pipeline-pill graphrag">Fixed Graph Traversal</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">
+              Extracts entity mentions, expands 1-hop and 2-hop graph neighborhoods in TigerGraph, and enriches context with linked documents.
+            </p>
+            <div class="pipeline-metrics-row">
+              <div class="metric-item">
+                <span>Mean Latency</span>
+                <span class="num">1,106 ms</span>
+              </div>
+              <div class="metric-item">
+                <span>Mean Tokens</span>
+                <span class="num">93 tok</span>
+              </div>
+              <div class="metric-item">
+                <span>Hops</span>
+                <span class="num">1-2</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-result-card highlight">
+            <div class="pipeline-result-header">
+              <h3>Pipeline 3: Agentic GraphRAG</h3>
+              <span class="pipeline-pill agentic">Autonomous Multi-Step</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">
+              Query Complexity Router + Autonomous Orchestrator + 8 Specialized Tools + Grounding & Sufficiency Validator with stopping criteria.
+            </p>
+            <div class="pipeline-metrics-row">
+              <div class="metric-item">
+                <span>Mean Latency</span>
+                <span class="num">126 ms</span>
+              </div>
+              <div class="metric-item">
+                <span>Mean Tokens</span>
+                <span class="num">611 tok</span>
+              </div>
+              <div class="metric-item">
+                <span>Hops / Tools</span>
+                <span class="num">2.0 / 2.3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 3-Way Comparative Charts -->
+    <div id="tab-charts" class="tab-panel">
+      <div class="charts-grid">
+        <div class="chart-wrapper">
+          <div class="card-header" style="margin-bottom: 8px;">
+            <h2>Accuracy (Exact Match %) by Query Archetype</h2>
+          </div>
+          <canvas id="accuracyChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <div class="card-header" style="margin-bottom: 8px;">
+            <h2>Token Efficiency (Total Tokens per Query)</h2>
+          </div>
+          <canvas id="tokensChart"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-wrapper">
+          <div class="card-header" style="margin-bottom: 8px;">
+            <h2>Execution Latency (ms) Comparison</h2>
+          </div>
+          <canvas id="latencyChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <div class="card-header" style="margin-bottom: 8px;">
+            <h2>F1 Score (Semantic Token Overlap)</h2>
+          </div>
+          <canvas id="f1Chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Live 3-Way Playground -->
+    <div id="tab-playground" class="tab-panel">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h2>Interactive 3-Way Query Sandbox</h2>
+            <p>Run any question through Standard RAG, GraphRAG, and Agentic GraphRAG side-by-side in real-time.</p>
+          </div>
+        </div>
+
+        <div class="playground-section">
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Quick Preset Archetypes:</span>
+            <div class="preset-buttons" style="margin-top: 6px;">
+              <button class="preset-btn" data-query="According to the provided corpus, how many biathlon events at the 2018 Winter Olympics had more than 73 competitors?" data-qtype="aggregation">
+                🔢 Aggregation Query
+              </button>
+              <button class="preset-btn" data-query="Who won the gold medal in the men's heavyweight boxing event at the Summer Olympics held immediately before 2016?" data-qtype="temporal">
+                ⏳ Temporal Query
+              </button>
+              <button class="preset-btn" data-query="Which sailing event at the 2016 Summer Olympics had the highest number of competitors?" data-qtype="superlative">
+                🏆 Superlative Query
+              </button>
+              <button class="preset-btn" data-query="Who won the gold medal in the event held at Olympic Tennis Centre on 15 to 22 August 2004?" data-qtype="multi_hop">
+                🔗 Multi-Hop Query
+              </button>
+              <button class="preset-btn" data-query="How many nations competed in Swimming at the 2016 Summer Olympics – Men's 100 metre butterfly?" data-qtype="lookup">
+                ⚡ Direct Lookup (Overkill Case)
+              </button>
+            </div>
+          </div>
+
+          <div class="query-input-bar">
+            <input type="text" id="sandbox-query-input" placeholder="Enter an Olympic question to benchmark across all 3 pipelines..." value="According to the provided corpus, how many biathlon events at the 2018 Winter Olympics had more than 73 competitors?">
+            <button class="run-query-btn" id="btn-run-query">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Benchmark All 3</span>
+            </button>
+          </div>
+
+          <!-- Live Side-by-Side Results -->
+          <div class="pipelines-trio" id="live-results-container">
+            <!-- Pipeline 1 -->
+            <div class="pipeline-result-card" id="card-rag">
+              <div class="pipeline-result-header">
+                <h4>Pipeline 1: Standard RAG</h4>
+                <span class="pipeline-pill rag">Vector Search</span>
+              </div>
+              <div class="pipeline-answer-box" id="rag-live-answer">Click "Benchmark All 3" to evaluate.</div>
+              <div class="pipeline-metrics-row">
+                <div class="metric-item">
+                  <span>Latency</span>
+                  <span class="num" id="rag-live-latency">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Tokens</span>
+                  <span class="num" id="rag-live-tokens">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Tools</span>
+                  <span class="num">1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline 2 -->
+            <div class="pipeline-result-card" id="card-graphrag">
+              <div class="pipeline-result-header">
+                <h4>Pipeline 2: GraphRAG</h4>
+                <span class="pipeline-pill graphrag">Graph Traversal</span>
+              </div>
+              <div class="pipeline-answer-box" id="graphrag-live-answer">Click "Benchmark All 3" to evaluate.</div>
+              <div class="pipeline-metrics-row">
+                <div class="metric-item">
+                  <span>Latency</span>
+                  <span class="num" id="graphrag-live-latency">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Tokens</span>
+                  <span class="num" id="graphrag-live-tokens">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Hops</span>
+                  <span class="num" id="graphrag-live-hops">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline 3 -->
+            <div class="pipeline-result-card highlight" id="card-agentic">
+              <div class="pipeline-result-header">
+                <h4>Pipeline 3: Agentic GraphRAG</h4>
+                <span class="pipeline-pill agentic">Autonomous Agent</span>
+              </div>
+              <div class="pipeline-answer-box" id="agentic-live-answer" style="border-color: rgba(240, 90, 40, 0.4); font-weight: 500;">
+                Click "Benchmark All 3" to evaluate.
+              </div>
+              <div class="pipeline-metrics-row">
+                <div class="metric-item">
+                  <span>Latency</span>
+                  <span class="num" id="agentic-live-latency">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Tokens</span>
+                  <span class="num" id="agentic-live-tokens">—</span>
+                </div>
+                <div class="metric-item">
+                  <span>Tools</span>
+                  <span class="num" id="agentic-live-tools">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Observable Agentic Trace Inspector -->
+    <div id="tab-trace" class="tab-panel">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h2>Observable Agentic Execution Trace</h2>
+            <p>Real-time audit log of the Orchestrator's internal reasoning, tool selection, graph hops, and stopping condition.</p>
+          </div>
+          <span class="status-badge" id="trace-meta-summary">Query Type: Aggregation | Agent Required: True</span>
+        </div>
+
+        <div class="trace-timeline" id="trace-steps-container">
+          <!-- Step 1 -->
+          <div class="trace-step-item">
+            <div class="step-num-badge">1</div>
+            <div class="step-content">
+              <div class="step-header">
+                <div class="step-action-title">query_classification</div>
+                <div class="step-time">0.00 ms</div>
+              </div>
+              <div class="step-desc">Query classified as: aggregation (Agent Required: True)</div>
+              <div class="step-details-json">
+                {"reason": "Query requires counting, filtering, or aggregating across multiple event/athlete records.", "recommended_pipeline": "agentic"}
+              </div>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="trace-step-item">
+            <div class="step-num-badge">2</div>
+            <div class="step-content">
+              <div class="step-header">
+                <div class="step-action-title">tool_selection</div>
+                <div class="step-time">0.00 ms</div>
+              </div>
+              <div class="step-desc">Selected tools: [AggregationReasonerTool, EntityLinkerTool]</div>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="trace-step-item">
+            <div class="step-num-badge">3</div>
+            <div class="step-content">
+              <div class="step-header">
+                <div class="step-action-title">graph_aggregation</div>
+                <div class="step-time">19.50 ms</div>
+              </div>
+              <div class="step-desc">Discovered 5 matching event vertices in TigerGraph schema with competitors > 73</div>
+              <div class="step-details-json">
+                {"count": 5, "events": ["Biathlon at the 2018 Winter Olympics – Men's sprint", "Biathlon at the 2018 Winter Olympics – Men's individual", "Biathlon at the 2018 Winter Olympics – Women's sprint", "Biathlon at the 2018 Winter Olympics – Women's individual", "Biathlon at the 2018 Winter Olympics – Men's pursuit"]}
+              </div>
+            </div>
+          </div>
+          <!-- Step 4 -->
+          <div class="trace-step-item">
+            <div class="step-num-badge">4</div>
+            <div class="step-content">
+              <div class="step-header">
+                <div class="step-action-title">evidence_validation</div>
+                <div class="step-time">19.50 ms</div>
+              </div>
+              <div class="step-desc">Grounding Validation: PASS (Answer supported by corpus facts; stopping criteria satisfied)</div>
+              <div class="step-details-json">
+                {"status": "PASS", "is_sufficient": true, "grounded": true, "facts_count": 5}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: TigerGraph Explorer -->
+    <div id="tab-graph" class="tab-panel">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h2>TigerGraph Knowledge Graph Visualizer</h2>
+            <p>Interactive force-directed graph rendering Olympic entities and relational edges (drag nodes to explore).</p>
+          </div>
+          <button class="preset-btn" id="btn-reset-graph">Reset View</button>
+        </div>
+
+        <div class="graph-canvas-container">
+          <canvas id="tigergraph-canvas"></canvas>
+          <div class="graph-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#f05a28;"></span> OlympicGames</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#a855f7;"></span> Sport</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#06b6d4;"></span> Event</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Athlete</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Venue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: 100-Question Public Benchmark Explorer -->
+    <div id="tab-questions" class="tab-panel">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h2>100-Question Public Benchmark Results</h2>
+            <p>Per-question evaluation audit comparing Ground Truth vs Standard RAG, GraphRAG, and Agentic GraphRAG.</p>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="table-search" placeholder="Search questions or keywords...">
+          <select id="table-filter-type">
+            <option value="all">All Archetypes (100)</option>
+            <option value="aggregation">Aggregation (21)</option>
+            <option value="temporal">Temporal (22)</option>
+            <option value="superlative">Superlative (10)</option>
+            <option value="multi_hop">Multi-Hop (28)</option>
+            <option value="lookup">Lookup (19)</option>
+          </select>
+        </div>
+
+        <div class="benchmark-table-wrapper">
+          <table class="benchmark-table" id="benchmark-table">
+            <thead>
+              <tr>
+                <th>QID</th>
+                <th>Type</th>
+                <th>Question</th>
+                <th>Ground Truth</th>
+                <th>Agentic Answer</th>
+                <th>RAG Answer</th>
+                <th>Agentic EM</th>
+                <th>RAG EM</th>
+                <th>Tokens (Agentic / RAG)</th>
+              </tr>
+            </thead>
+            <tbody id="benchmark-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: SYSTEM ARCHITECTURE -->
+    <div id="tab-architecture" class="tab-panel">
+      <div class="dashboard-card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2>TigerGraph Agentic GraphRAG System Architecture</h2>
+            <p>End-to-end data ingestion, 3 parallel retrieval pipelines, dynamic agent reasoning loop, and comparative evaluation layer.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/static/architecture_diagram.svg" download="tigergraph_agentic_graphrag_architecture.svg" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; background: linear-gradient(135deg, #f05a28, #ea580c); color: white; font-weight: 600; font-size: 0.88rem; box-shadow: 0 4px 14px rgba(240,90,40,0.35);">
+              <span>📥</span> Download SVG (Vector)
+            </a>
+            <a href="/static/architecture_diagram.html" target="_blank" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; background: #1e293b; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.12); font-weight: 600; font-size: 0.88rem;">
+              <span>🔍</span> 4K Viewer &amp; PNG Export
+            </a>
+          </div>
+        </div>
+        <div style="margin-top: 18px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #070a12; text-align: center; padding: 16px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);">
+          <img src="/static/architecture_diagram.svg" alt="TigerGraph Agentic GraphRAG System Architecture" style="width: 100%; max-width: 1400px; height: auto; border-radius: 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>TigerGraph Agentic GraphRAG Hackathon — Built with TigerGraph, GSQL, FAISS & Autonomous Multi-Step Agentic Architecture.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
