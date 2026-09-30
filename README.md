@@ -1,4 +1,4 @@
-# 🐯 TigerGraph Agentic GraphRAG
+#  TigerGraph Agentic GraphRAG
 
 [![TigerGraph Hackathon](https://img.shields.io/badge/TigerGraph-Hackathon%20Round%201-orange.svg)](https://tigergraph.com)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
