@@ -10,14 +10,13 @@
 
 ---
 
-## 🏆 Round 1 Deliverables Checklist
+##  Round 1 Deliverables Checklist
 
 | Deliverable | Requirement | Status | Location / Artifact |
 | :--- | :--- | :---: | :--- |
 | **Working System** | 3 pipelines + Orchestrator + Tools + Harness | ✅ Complete | `backend/` |
 | **Metrics Dashboard** | Visual dashboard comparing accuracy, tokens, latency | ✅ Complete | `frontend/` (accessible at `http://localhost:8000`) |
 | **Architecture Diagram** | System design, agent loop, schema diagrams | ✅ Complete | [`docs/architecture.md`](docs/architecture.md) |
-| **Demo Video Script** | 3–5 minute presentation walkthrough for judges | ✅ Complete | [`docs/demo_walkthrough.md`](docs/demo_walkthrough.md) |
 | **100 Public Benchmark** | Accuracy (EM/F1), tokens, latency, ROI analysis | ✅ Complete | [`evaluation_results.json`](evaluation_results.json) |
 | **50 Hidden Predictions** | Predicted answers, tokens, observable agentic traces | ✅ Complete | [`submission_eval_hidden_output.jsonl`](submission_eval_hidden_output.jsonl) |
 | **TigerGraph Stack** | GSQL Schema + pyTigerGraph integration | ✅ Complete | [`backend/graph/tigergraph_schema.gsql`](backend/graph/tigergraph_schema.gsql) |
